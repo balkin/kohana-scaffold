@@ -7,6 +7,7 @@
 	tr:odd { background:#eeffff; }
 	th,
 	td { border-right:1px solid #333; font-size:12px; padding:3px 3px 3px 10px; }
+	th {border-bottom: 1px dotted #333;border-top:1px dotted #333}
 	td.last { text-align:center; }
 	label { display:inline; float:left; position:relative; width:212px; }
 	a:link,
