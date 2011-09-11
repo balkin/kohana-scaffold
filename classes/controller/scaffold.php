@@ -79,6 +79,7 @@ class Controller_Scaffold extends Controller {
 					$properties_phpdoc[] = '@property $' . $column["column_name"] . ' ' . $column['type'];
 				}
 				$properties_phpdoc_implode = implode("\n * ", $properties_phpdoc);
+				$factory = "\tpublic static function factory(\$model=NULL,\$id=NULL) { return new Model_Scaffold_$class_name(\$id); }";
 				$model_container = "<?php defined('SYSPATH') or die('No direct access allowed.');
 
 /**
@@ -101,7 +102,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 							? "TRUE" : "FALSE") . "),\n";
 				}
 				// TODO: BaRoN!: Add a few static factory methods :)
-				$model_container .= "\t);\n}";
+				$model_container .= "\t);\n\n$factory\n}";
 
 				if (!is_dir($path)) {
 					mkdir($path, 0777, TRUE);
