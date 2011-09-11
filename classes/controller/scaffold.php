@@ -59,6 +59,7 @@ class Controller_Scaffold extends Controller {
 				$_primary_key = "";
 				$_primary_val = "";
 				$properties_phpdoc = array();
+				$belongs_to = array();
 
 				foreach ($db as $column) {
 					if (($_primary_key !== "") && ($_primary_val === "") && $column["type"] === "string") {
@@ -66,6 +67,14 @@ class Controller_Scaffold extends Controller {
 					}
 					if ($column["key"] === "PRI") {
 						$_primary_key = $column["column_name"];
+					}
+					if ($column['key'] === 'MUL') {
+						if (substr($column['column_name'], -3) == '_id') {
+							$referenced_class = substr($column['column_name'], 0, -3);
+							$referenced_model = 'Model_Scaffold_' . ucfirst($referenced_class);
+							$belongs_to[] = '\'' . $referenced_class . '\' => array(\'model\' => \'scaffold_'.$referenced_class.'\')';
+							$properties_phpdoc[] = '@property ' . $referenced_class . ' ' . $referenced_model;
+						}
 					}
 					$properties_phpdoc[] = '@property ' . $column["column_name"] . ' ' . $column['type'];
 				}
@@ -81,7 +90,11 @@ class Model_Scaffold_" . $class_name . " extends ORM
 	protected \$_table_name  = '" . str_replace("scaffold_", "", $this->column) . "';
 	protected \$_primary_key = '$_primary_key';
 	protected \$_primary_val = '$_primary_val';
- 
+";
+				if (count($belongs_to)) {
+					$model_container .= "\tprotected \$_belongs_to = array(" . implode($belongs_to, ', ') . ');' . PHP_EOL;
+				}
+				$model_container .= "
 	protected \$_table_columns = array(\n";
 				foreach ($db as $column) {
 					$model_container .= "\t\t'" . $column["column_name"] . "' => array('data_type' => '" . $column["type"] . "', 'is_nullable' => " . (($column["is_nullable"])
@@ -113,8 +126,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 	protected function auto_modeller() {
 		$i = 0;
 		$items = array();
-		foreach (Database::instance()->list_tables() as $item)
-		{
+		foreach (Database::instance()->list_tables() as $item) {
 			if ($this->_auto_model($item)) {
 				$i++;
 			}
@@ -142,8 +154,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 	protected function remove_models() {
 		$path = APPPATH . 'classes' . DIRECTORY_SEPARATOR . "model" . DIRECTORY_SEPARATOR . "scaffold" . DIRECTORY_SEPARATOR;
 		$count = 0;
-		foreach (glob($path . "*") as $fname)
-		{
+		foreach (glob($path . "*") as $fname) {
 			unlink($fname);
 			$count++;
 		}
@@ -157,11 +168,11 @@ class Model_Scaffold_" . $class_name . " extends ORM
 	public function action_index() {
 		$content = array();
 
-		if (isset($_GET["auto_modeler"])) {
-			if (empty($_GET["auto_modeler"])) {
+		if (isset($_GET["auto_modeller"])) {
+			if (empty($_GET["auto_modeller"])) {
 				$this->auto_modeller();
 			} else {
-				$this->auto_modeller($_GET["auto_modeler"]);
+				$this->auto_modeller($_GET["auto_modeller"]);
 			}
 		}
 
@@ -192,15 +203,13 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			}
 			closedir($handle);
 
-			foreach ($directores as $item)
-			{
+			foreach ($directores as $item) {
 				$item_name = str_replace(Array($path, EXT), "", $item);
 				// array_push( $content, HTML::anchor('scaffold?dir='.$item_name, "[+] " . ucfirst($item_name)) );
 				// array_push( $content, "[+] " . ucfirst($item_name) );
 			}
 
-			foreach ($files as $item)
-			{
+			foreach ($files as $item) {
 				$item_name = str_replace(Array($path, EXT), "", $item);
 				array_push($content, HTML::anchor('scaffold/list/' . $subPath . $item_name, ImplodeUppercase::ucwords_text($item_name)));
 			}
@@ -218,8 +227,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		echo View::factory("scaffold/index", $data)->render();
 	}
 
-	public function action_list($request = NULL)
-	{
+	public function action_list($request = NULL) {
 		if (empty($request)) {
 			$this->request->redirect('scaffold');
 		}
@@ -273,8 +281,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		echo View::factory("scaffold/list", $data)->render();
 	}
 
-	public function action_insert($request)
-	{
+	public function action_insert($request) {
 		if ($request === "save") {
 			$this->column = $_POST["column"];
 			unset($_POST["column"]);
