@@ -17,5 +17,8 @@ return array
 	"Remove all models" => 'Удалить все модели',
 	'Model' => 'списку моделей',
 	'Models' => 'Модели',
+	'One new model' => 'Одна новая модель',
+	':num new models' => ':num новых моделей',
+	"No new models found" => 'Новых моделей не обнаружено',
 );
 

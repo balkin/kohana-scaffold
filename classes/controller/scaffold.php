@@ -144,10 +144,14 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			}
 		}
 
-		if ($i > 0) {
-			$this->flash("$i new models");
-		} else {
-			$this->flash("No new model found", "notice");
+		if ($i == 1) {
+			$this->flash(__("One new model"));
+		}
+		elseif ($i > 0) {
+			$this->flash(__(":num new models"));
+		}
+		else {
+			$this->flash(__("No new models found"), "notice");
 		}
 		$this->request->redirect("scaffold");
 	}
