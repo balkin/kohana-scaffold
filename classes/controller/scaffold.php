@@ -58,6 +58,7 @@ class Controller_Scaffold extends Controller {
 				$db = Database::instance()->list_columns($this->column);
 				$_primary_key = "";
 				$_primary_val = "";
+				$properties_phpdoc = array();
 
 				foreach ($db as $collum) {
 					if (($_primary_key !== "") && ($_primary_val === "") && $collum["type"] === "string") {
@@ -66,9 +67,14 @@ class Controller_Scaffold extends Controller {
 					if ($collum["key"] === "PRI") {
 						$_primary_key = $collum["column_name"];
 					}
+					$properties_phpdoc[] = '@property ' . $collum["column_name"] . ' ' . $collum['type'];
 				}
+				$properties_phpdoc_implode = implode("\n * ", $properties_phpdoc);
 				$model_container = "<?php defined('SYSPATH') or die('No direct access allowed.');
 
+/**
+ * $properties_phpdoc_implode
+ */
 class Model_Scaffold_" . $class_name . " extends ORM
 {
 	protected \$_db = 'default';
