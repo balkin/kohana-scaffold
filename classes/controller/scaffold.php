@@ -4,7 +4,7 @@ class Controller_Scaffold extends Controller {
 
 	protected $column = '';
 
-	protected $auto_modeler = TRUE;
+	protected $auto_modeller = TRUE;
 
 	protected $items_per_page = 15;
 
@@ -45,7 +45,7 @@ class Controller_Scaffold extends Controller {
 
 	protected function _auto_model($model = NULL) {
 		$success = FALSE;
-		if ($this->auto_modeler) {
+		if ($this->auto_modeller) {
 			if ($model !== NULL) {
 				$model_tmp = $this->column = $model;
 			}
@@ -60,14 +60,14 @@ class Controller_Scaffold extends Controller {
 				$_primary_val = "";
 				$properties_phpdoc = array();
 
-				foreach ($db as $collum) {
-					if (($_primary_key !== "") && ($_primary_val === "") && $collum["type"] === "string") {
-						$_primary_val = $collum["column_name"];
+				foreach ($db as $column) {
+					if (($_primary_key !== "") && ($_primary_val === "") && $column["type"] === "string") {
+						$_primary_val = $column["column_name"];
 					}
-					if ($collum["key"] === "PRI") {
-						$_primary_key = $collum["column_name"];
+					if ($column["key"] === "PRI") {
+						$_primary_key = $column["column_name"];
 					}
-					$properties_phpdoc[] = '@property ' . $collum["column_name"] . ' ' . $collum['type'];
+					$properties_phpdoc[] = '@property ' . $column["column_name"] . ' ' . $column['type'];
 				}
 				$properties_phpdoc_implode = implode("\n * ", $properties_phpdoc);
 				$model_container = "<?php defined('SYSPATH') or die('No direct access allowed.');
@@ -83,8 +83,8 @@ class Model_Scaffold_" . $class_name . " extends ORM
 	protected \$_primary_val = '$_primary_val';
  
 	protected \$_table_columns = array(\n";
-				foreach ($db as $collum) {
-					$model_container .= "\t\t'" . $collum["column_name"] . "' => array('data_type' => '" . $collum["type"] . "', 'is_nullable' => " . (($collum["is_nullable"])
+				foreach ($db as $column) {
+					$model_container .= "\t\t'" . $column["column_name"] . "' => array('data_type' => '" . $column["type"] . "', 'is_nullable' => " . (($column["is_nullable"])
 							? "TRUE" : "FALSE") . "),\n";
 				}
 				$model_container .= "\t);\n}";
@@ -110,7 +110,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		return $class_name;
 	}
 
-	protected function auto_modeler() {
+	protected function auto_modeller() {
 		$i = 0;
 		$items = array();
 		foreach (Database::instance()->list_tables() as $item)
@@ -159,9 +159,9 @@ class Model_Scaffold_" . $class_name . " extends ORM
 
 		if (isset($_GET["auto_modeler"])) {
 			if (empty($_GET["auto_modeler"])) {
-				$this->auto_modeler();
+				$this->auto_modeller();
 			} else {
-				$this->auto_modeler($_GET["auto_modeler"]);
+				$this->auto_modeller($_GET["auto_modeler"]);
 			}
 		}
 
