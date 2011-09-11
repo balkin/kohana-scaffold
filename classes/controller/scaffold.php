@@ -148,7 +148,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			$this->flash(__("One new model"));
 		}
 		elseif ($i > 0) {
-			$this->flash(__(":num new models"));
+			$this->flash(__(":num new models", array(':num' => $i)));
 		}
 		else {
 			$this->flash(__("No new models found"), "notice");
