@@ -20,5 +20,8 @@ return array
 	'One new model' => 'Одна новая модель',
 	':num new models' => ':num новых моделей',
 	"No new models found" => 'Новых моделей не обнаружено',
+	"No models removed" => 'Ни одной модели не удалено',
+	":count models removed" => ':count моделей удалено',
+
 );
 

@@ -164,9 +164,10 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			$count++;
 		}
 		if ($count === 0) {
-			$count = "No";
+			$this->flash(__("No models removed"), "notice");
+		} else {
+			$this->flash(__(":count models removed", array(':count'=>$count)), "notice");
 		}
-		$this->flash("$count models removed", "notice");
 		$this->request->redirect("scaffold");
 	}
 
