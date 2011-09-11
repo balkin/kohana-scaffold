@@ -265,12 +265,12 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			}
 
 			$id = $key[$this->db_first];
-			array_push($item, "<a href=\"$controller/edit/" . $this->column . "/$id\">" . __("Edit") . "</a> | <a href=\"$controller/delete/" . $this->column . "/$id\"  class=\"delete\">" . __("Delete") . "</a>");
+			array_push($item, "<a href=\"$controller/edit/" . $column . "/$id\">" . __("Edit") . "</a> | <a href=\"$controller/delete/" . $column . "/$id\"  class=\"delete\">" . __("Delete") . "</a>");
 			array_push($result, $item);
 		}
 
 		$data = Array(
-			"column" => ucfirst(str_replace("_", " ", $this->column)),
+			"column" => $column,
 			"db_first" => $this->db_first,
 			"header" => $this->header,
 			"pagination" => $pagination->render(),
@@ -301,11 +301,12 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			}
 			$this->request->redirect("scaffold/list/" . $this->column . "/");
 		} else {
-			$orm = ORM::factory("scaffold_" . $this->generateClassName($request));
+			$model = $this->generateClassName($request);
+			$orm = ORM::factory("scaffold_" . $model);
 			$this->column = $orm->table_name();
 			$this->_get_schema();
 			$data = Array(
-				"column" => ucfirst(str_replace("_", " ", $this->column)),
+				"column" => $model,
 				"header" => $this->header,
 				"first" => $this->db_first
 			);
@@ -313,17 +314,18 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		}
 	}
 
-	public function action_edit($request, $id) {
-		$this->column = $request;
+	public function action_edit() {
+		$id = $this->request->param('id');
+		$model = $this->request->param('column');
+		$orm = ORM::factory("scaffold_" . $model, $id);
+		$this->column = $orm->table_name();
 		$this->_get_schema(TRUE);
 
-		$orm = ORM::factory("scaffold_" . $this->column, $id)->as_array();
-
 		$data = Array(
-			"column" => ucfirst($this->column),
+			"column" => ucfirst($model),
 			"request" => $id,
 			"first" => $this->db_first,
-			"content" => $orm
+			"content" => $orm->as_array()
 		);
 
 		echo View::factory("scaffold/edit", $data)->render();
@@ -345,14 +347,14 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		}
 	}
 
-	public function action_delete($request, $id) {
-		$this->column = $request;
-		$this->_get_schema();
-
-		$orm = ORM::factory("scaffold_" . $this->column, $id)->delete();
-
-		$this->flash(__("Registration $request successfully deleted"), "error");
-		$this->request->redirect("scaffold/list/" . $request);
+	public function action_delete() {
+		$model = $this->request->param('column');
+		$id = $this->request->param('id');
+		$orm = ORM::factory("scaffold_" . $model, $id)->delete();
+		$this->column = $orm->table_name();
+//		$this->_get_schema();
+		$this->flash(__("Model $model with id $id successfully deleted"), "error");
+		$this->request->redirect("scaffold/list/" . $model);
 	}
 
 }
