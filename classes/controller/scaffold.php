@@ -352,8 +352,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		$id = $this->request->param('id');
 		$orm = ORM::factory("scaffold_" . $model, $id)->delete();
 		$this->column = $orm->table_name();
-//		$this->_get_schema();
-		$this->flash(__("Model $model with id $id successfully deleted"), "error");
+		$this->flash(__("Model :model with id :id successfully deleted", array(':model' => $model, ':id' => $id)), "error");
 		$this->request->redirect("scaffold/list/" . $model);
 	}
 
