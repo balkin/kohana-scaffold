@@ -100,6 +100,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 					$model_container .= "\t\t'" . $column["column_name"] . "' => array('data_type' => '" . $column["type"] . "', 'is_nullable' => " . (($column["is_nullable"])
 							? "TRUE" : "FALSE") . "),\n";
 				}
+				// TODO: BaRoN!: Add a few static factory methods :)
 				$model_container .= "\t);\n}";
 
 				if (!is_dir($path)) {
