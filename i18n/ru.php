@@ -4,6 +4,7 @@ return array
 (
 	"No models to list" => 'Нет моделей для просмотра',
 	"Please, select a column" => 'Пожалуйста, выберите столбец',
+	"Insert" => 'Добавить',
 	"Edit" => 'Редактировать',
 	"Delete" => 'Удалить',
 	"Save" => 'Сохранить',
@@ -22,6 +23,5 @@ return array
 	"No new models found" => 'Новых моделей не обнаружено',
 	"No models removed" => 'Ни одной модели не удалено',
 	":count models removed" => ':count моделей удалено',
-
 );
 
