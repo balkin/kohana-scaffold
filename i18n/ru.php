@@ -23,5 +23,7 @@ return array
 	"No new models found" => 'Новых моделей не обнаружено',
 	"No models removed" => 'Ни одной модели не удалено',
 	":count models removed" => ':count моделей удалено',
+	"Record updated successfully!" => 'Запись успешно обновлена!',
+	"Record added successfully!" => 'Запись успешно добавлена!',
 );
 

@@ -299,7 +299,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 
 			if ($orm->check()) {
 				$orm->save();
-				$this->flash(__('Record updated successfully!'));
+				$this->flash(__('Record added successfully!'));
 			} else {
 				$errors = $orm->validate()->errors();
 				$this->flash($errors, "error");
