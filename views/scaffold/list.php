@@ -9,7 +9,7 @@
 	<body>
 		<div id="container">
 			<p>
-				<?php echo HTML::anchor('scaffold', 'Models'); ?> > <strong><?php echo ImplodeUppercase::ucwords_text($column) ?></strong>
+				<?php echo HTML::anchor('scaffold', __('Models')); ?> > <strong><?php echo ImplodeUppercase::ucwords_text($column) ?></strong>
 			</p>
 			<?php
 				$msg = Session::instance()->get("flash.message");
