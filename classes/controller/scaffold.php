@@ -73,10 +73,10 @@ class Controller_Scaffold extends Controller {
 							$referenced_class = substr($column['column_name'], 0, -3);
 							$referenced_model = 'Model_Scaffold_' . ucfirst($referenced_class);
 							$belongs_to[] = '\'' . $referenced_class . '\' => array(\'model\' => \'scaffold_'.$referenced_class.'\')';
-							$properties_phpdoc[] = '@property ' . $referenced_class . ' ' . $referenced_model;
+							$properties_phpdoc[] = '@property $' . $referenced_class . ' ' . $referenced_model;
 						}
 					}
-					$properties_phpdoc[] = '@property ' . $column["column_name"] . ' ' . $column['type'];
+					$properties_phpdoc[] = '@property $' . $column["column_name"] . ' ' . $column['type'];
 				}
 				$properties_phpdoc_implode = implode("\n * ", $properties_phpdoc);
 				$model_container = "<?php defined('SYSPATH') or die('No direct access allowed.');
