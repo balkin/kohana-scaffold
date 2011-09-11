@@ -282,12 +282,15 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		echo View::factory("scaffold/list", $data)->render();
 	}
 
-	public function action_insert($request) {
+	public function action_insert($request = NULL) {
+		if (is_null($request)) {
+			$request = $this->request->param('column');
+		}
 		if ($request === "save") {
 			$this->column = $_POST["column"];
 			unset($_POST["column"]);
 
-			$orm = ORM::factory("scaffold_" . $this->column)->values($_POST);
+			$orm = ORM::factory("scaffold_" . $this->generateClassName($this->column))->values($_POST);
 
 			if ($orm->check()) {
 				$orm->save();
@@ -298,7 +301,8 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			}
 			$this->request->redirect("scaffold/list/" . $this->column . "/");
 		} else {
-			$this->column = $request;
+			$orm = ORM::factory("scaffold_" . $this->generateClassName($request));
+			$this->column = $orm->table_name();
 			$this->_get_schema();
 			$data = Array(
 				"column" => ucfirst(str_replace("_", " ", $this->column)),
