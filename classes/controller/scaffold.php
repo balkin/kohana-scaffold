@@ -257,7 +257,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		                                  ));
 
 		$query = $orm
-				->limit($pagination->items_per_page)
+				->limit($this->items_per_page)
 				->offset($pagination->offset)
 				->find_all();
 
