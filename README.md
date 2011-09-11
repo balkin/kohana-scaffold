@@ -1,6 +1,6 @@
 # Scaffold
 
-*Scaffold module for Kohana 3.*
+*Scaffold module for Kohana 3.2.*
 
 ## Description
 
