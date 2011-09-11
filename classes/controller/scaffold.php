@@ -228,11 +228,13 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		echo View::factory("scaffold/index", $data)->render();
 	}
 
-	public function action_list($request = NULL) {
-		if (empty($request)) {
+	public function action_list($column = NULL) {
+		$column = $this->request->param('column');
+		if (empty($column)) {
 			$this->request->redirect('scaffold');
 		}
-		$this->column = $request;
+		$orm = ORM::factory("scaffold_" . $column);
+		$this->column = $orm->table_name();
 		$this->_get_schema();
 
 		if ($this->column === "") {
@@ -240,9 +242,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			exit;
 		}
 
-		$orm = ORM::factory("scaffold_" . $this->column);
-
-		$controller = url::base() . $this->request->controller;
+		$controller = url::site($this->request->controller());
 
 		$this->items_per_page = (isset($_GET["items_per_page"])) ? $_GET["items_per_page"] : $this->items_per_page;
 
