@@ -49,26 +49,8 @@ class Controller_Scaffold extends Controller {
 			if ($model !== NULL) {
 				$model_tmp = $this->column = $model;
 			}
-			$class_name = $this->column;
-			$class_name = str_replace("_", " ", $class_name);
-			$class_name = str_replace(" ", "", ucwords(strtolower($class_name)));
+			$class_name = $this->generateClassName($this->column);
 			$directory_name = "model" . DIRECTORY_SEPARATOR . "scaffold" . DIRECTORY_SEPARATOR;
-			/*
-			if ( preg_match("/_/i", $class_name) )
-			{
-				$directory_name = "model";
-				$paths = explode("_", $class_name);
-				$count = count($paths);
-				while ( $count >= 1 )
-				{
-					$directory_name .= DIRECTORY_SEPARATOR . array_shift( $paths );
-					$count = count($paths);
-					if ( $count === 1 ) {
-						$class_name = array_shift( $paths );
-					};
-				};
-			};
-			*/
 			$path = APPPATH . 'classes' . DIRECTORY_SEPARATOR . $directory_name;
 			$file = $path . $class_name . EXT;
 
@@ -86,14 +68,15 @@ class Controller_Scaffold extends Controller {
 					}
 				}
 				$model_container = "<?php defined('SYSPATH') or die('No direct access allowed.');
+
 class Model_Scaffold_" . $class_name . " extends ORM
 {
 	protected \$_db = 'default';
-    protected \$_table_name  = '" . str_replace("scaffold_", "", $this->column) . "';
-    protected \$_primary_key = '$_primary_key';
-    protected \$_primary_val = '$_primary_val';
+	protected \$_table_name  = '" . str_replace("scaffold_", "", $this->column) . "';
+	protected \$_primary_key = '$_primary_key';
+	protected \$_primary_val = '$_primary_val';
  
-    protected \$_table_columns = array(\n";
+	protected \$_table_columns = array(\n";
 				foreach ($db as $collum) {
 					$model_container .= "\t\t'" . $collum["column_name"] . "' => array('data_type' => '" . $collum["type"] . "', 'is_nullable' => " . (($collum["is_nullable"])
 							? "TRUE" : "FALSE") . "),\n";
@@ -113,6 +96,14 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		return $success;
 	}
 
+	protected function generateClassName($column) {
+		// TODO: BaRoN: make this configurable
+		$class_name = Inflector::singular($column);
+		$class_name = str_replace("_", " ", $class_name);
+		$class_name = str_replace(" ", "", ucwords(strtolower($class_name)));
+		return $class_name;
+	}
+
 	protected function auto_modeler() {
 		$i = 0;
 		$items = array();
@@ -121,14 +112,15 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			if ($this->_auto_model($item)) {
 				$i++;
 			}
-			$items[] = str_replace("_", "", $item);
+			$items[] = $this->generateClassName($item);
 		}
 
 		$path = APPPATH . 'classes' . DIRECTORY_SEPARATOR . "model" . DIRECTORY_SEPARATOR . "scaffold" . DIRECTORY_SEPARATOR;
 		$files = glob($path . "*.php");
 
 		foreach ($files as $fname) {
-			if (!in_array(strtolower(str_replace(array($path, ".php"), "", $fname)), $items)) {
+			$what = str_replace(array($path, ".php"), "", $fname);
+			if (!in_array($what, $items)) {
 				unlink($fname);
 			}
 		}
@@ -157,7 +149,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 	}
 
 	public function action_index() {
-		$content = Array();
+		$content = array();
 
 		if (isset($_GET["auto_modeler"])) {
 			if (empty($_GET["auto_modeler"])) {
