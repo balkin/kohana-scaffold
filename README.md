@@ -8,8 +8,10 @@ This is a simple system for creating a scaffold CRUD.
 
 ## Using
 
-- Place the module in the "modules" folder
-- Turn on the "bootstrap.php"
+- Place the module into the "modules" folder
+- Turn it on in the "bootstrap.php"
+- Place the module «pagination» into the "modules" folder
+- Turn it on in the "bootstrap.php" too
 - Enter the url "/scaffold/"
 - Click "List all models"
 - Enjoy
