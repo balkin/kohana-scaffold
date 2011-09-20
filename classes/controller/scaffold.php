@@ -92,7 +92,7 @@ class Controller_Scaffold extends Controller {
 class Model_Scaffold_" . $class_name . " extends ORM
 {
 	protected \$_db = 'default';
-	protected \$_table_name  = '" . str_replace("scaffold_", "", $this->column) . "';
+	protected \$_table_name  = '" . str_replace('scaffold_', "", $this->column) . "';
 	protected \$_primary_key = '$_primary_key';
 	protected \$_primary_val = '$_primary_val';
 ";
@@ -246,7 +246,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		if (empty($column)) {
 			$this->request->redirect('scaffold');
 		}
-		$orm = ORM::factory("scaffold_" . $column);
+		$orm = ORM::factory(class_exists('Model_' . $column) ? $column : 'scaffold_' . $column);
 		$this->column = $orm->table_name();
 		$this->_get_schema();
 
@@ -300,10 +300,10 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			$request = $this->request->param('column');
 		}
 		if ($request === "save") {
-			$this->column = $_POST["column"];
+			$column = $_POST["column"];
 			unset($_POST["column"]);
 
-			$orm = ORM::factory("scaffold_" . $this->generateClassName($this->column))->values($_POST);
+			$orm = ORM::factory(class_exists('Model_' . $column) ? $column : 'scaffold_' . $column)->values($_POST);
 
 			if ($orm->check()) {
 				$orm->save();
@@ -314,12 +314,12 @@ class Model_Scaffold_" . $class_name . " extends ORM
 			}
 			$this->request->redirect("scaffold/list/" . $this->column . "/");
 		} else {
-			$model = $this->generateClassName($request);
-			$orm = ORM::factory("scaffold_" . $model);
+			$column = $this->generateClassName($request);
+			$orm = ORM::factory((class_exists('Model_' . $column) ? $column : 'scaffold_' . $column));
 			$this->column = $orm->table_name();
 			$this->_get_schema();
 			$data = Array(
-				"column" => $model,
+				"column" => $column,
 				"header" => $this->header,
 				"first" => $this->db_first
 			);
@@ -329,13 +329,13 @@ class Model_Scaffold_" . $class_name . " extends ORM
 
 	public function action_edit() {
 		$id = $this->request->param('id');
-		$model = $this->request->param('column');
-		$orm = ORM::factory("scaffold_" . $model, $id);
+		$column = $this->request->param('column');
+		$orm = ORM::factory((class_exists('Model_' . $column) ? $column : 'scaffold_' . $column), $id);
 		$this->column = $orm->table_name();
 		$this->_get_schema(TRUE);
 
 		$data = Array(
-			"column" => ucfirst($model),
+			"column" => ucfirst($column),
 			"request" => $id,
 			"first" => $this->db_first,
 			"content" => $orm->as_array()
@@ -345,28 +345,28 @@ class Model_Scaffold_" . $class_name . " extends ORM
 	}
 
 	public function action_save() {
-		$id = array_keys($_POST);
-		$this->column = $_POST["column"];
+		$column = $_POST["column"];
 		unset($_POST["column"]);
+		$id = array_shift($_POST);
 
-		$orm = ORM::factory("scaffold_" . $this->column, array_shift($_POST))->values($_POST);
+		$orm = ORM::factory((class_exists('Model_' . $column) ? $column : 'scaffold_' . $column), $id)->values($_POST);
 
 		if ($orm->check()) {
 			$orm->save();
-			$this->request->redirect('scaffold/list/' . $this->column . '/?msg=' . __('Record updated successfully') . '!');
+			$this->request->redirect('scaffold/list/' . $column . '/?msg=' . __('Record updated successfully') . '!');
 		} else {
 			$errors = $orm->validate()->errors();
-			$this->request->redirect("scaffold/list/" . $this->column . "/?msg=$errors&msgtype=error");
+			$this->request->redirect("scaffold/list/" . $column . "/?msg=$errors&msgtype=error");
 		}
 	}
 
 	public function action_delete() {
-		$model = $this->request->param('column');
+		$column = $this->request->param('column');
 		$id = $this->request->param('id');
-		$orm = ORM::factory("scaffold_" . $model, $id)->delete();
+		$orm = ORM::factory((class_exists('Model_' . $column) ? $column : 'scaffold_' . $column), $id)->delete();
 		$this->column = $orm->table_name();
-		$this->flash(__("Model :model with id :id successfully deleted", array(':model' => $model, ':id' => $id)), "error");
-		$this->request->redirect("scaffold/list/" . $model);
+		$this->flash(__("Model :model with id :id successfully deleted", array(':model' => $column, ':id' => $id)), "error");
+		$this->request->redirect("scaffold/list/" . $column);
 	}
 
 }
