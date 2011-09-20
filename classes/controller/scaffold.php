@@ -50,6 +50,10 @@ class Controller_Scaffold extends Controller {
 				$model_tmp = $this->column = $model;
 			}
 			$class_name = $this->generateClassName($this->column);
+			if (strpos($class_name, '_')) {
+				// We can't handle subdirectories yet
+				$class_name = str_replace('_', '', $class_name);
+			}
 			$directory_name = "model" . DIRECTORY_SEPARATOR . "scaffold" . DIRECTORY_SEPARATOR;
 			$path = APPPATH . 'classes' . DIRECTORY_SEPARATOR . $directory_name;
 			$file = $path . $class_name . EXT;
@@ -120,8 +124,7 @@ class Model_Scaffold_" . $class_name . " extends ORM
 	protected function generateClassName($column) {
 		// TODO: BaRoN: make this configurable
 		$class_name = Inflector::singular($column);
-		$class_name = str_replace("_", " ", $class_name);
-		$class_name = str_replace(" ", "", ucwords(strtolower($class_name)));
+		$class_name = str_replace(" ", "", ucwords($class_name));
 		return $class_name;
 	}
 
@@ -129,10 +132,14 @@ class Model_Scaffold_" . $class_name . " extends ORM
 		$i = 0;
 		$items = array();
 		foreach (Database::instance()->list_tables() as $item) {
+			$className = $this->generateClassName($item);
+			$simpleName = 'Model_' . $className;
+			if (class_exists($simpleName)) continue;
+			// We can't deal with subdirectories yet, so…
 			if ($this->_auto_model($item)) {
 				$i++;
 			}
-			$items[] = $this->generateClassName($item);
+			$items[] = $className;
 		}
 
 		$path = APPPATH . 'classes' . DIRECTORY_SEPARATOR . "model" . DIRECTORY_SEPARATOR . "scaffold" . DIRECTORY_SEPARATOR;
